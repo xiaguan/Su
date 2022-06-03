@@ -22,7 +22,7 @@ namespace detail{
     static constexpr unsigned  b4 = 10000;
 
     template <std::integral T>
-    static inline unsigned gcc_get_int_len(T val){
+    static  unsigned gcc_get_int_len(T val){
         static constexpr unsigned base = 10;
         unsigned int n = 1;
         while(true){
