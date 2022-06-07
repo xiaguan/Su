@@ -29,8 +29,9 @@ void FileBuffer::output() {
 }
 
 void Buffer::append(const char *buf, size_t size) {
+
     memcpy(cur,buf,size);
-    idx += size;
+    addLen(size);
 }
 
 

@@ -117,7 +117,6 @@ public:
         return *this;
     }
 
-    // i don't need it now
     self& operator<<(const void*);
 
     self& operator<<(float v)
@@ -126,10 +125,11 @@ public:
         return *this;
     }
     self& operator<<(double);
-    // self& operator<<(long double);
+
 
     self& operator<<(char v)
     {
+
         buffer.append(&v, 1);
         return *this;
     }

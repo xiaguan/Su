@@ -24,6 +24,7 @@ public:
     void append(const char * buf, size_t size);
 
     // out put to anywhere file ,std::cout , even the net
+    // no virtual is ok with UNIX fd
     virtual void output() = 0;
 
     void reset(){ cur = data;idx = 0;}
@@ -40,8 +41,6 @@ protected:
 class FileBuffer : public Buffer{
 public:
     FileBuffer(std::string file_name,int buf_size);
-
-
     void output() override;
     ~FileBuffer() override;
 private:
