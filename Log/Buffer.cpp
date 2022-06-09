@@ -35,3 +35,29 @@ void Buffer::append(const char *buf, size_t size) {
 }
 
 
+StreamBuffer::self &StreamBuffer::operator<<(const void * val) {
+    static char digits[17] = "0123456789abcdef" ;
+
+    if(leftSize() < kMaxNumericSize) output();
+
+    char * buf = getCur();
+    buf[0] = '0';
+    buf[1]= 'x';
+    auto * to_hex = (unsigned char * )&val;
+    int idx = 13;
+    for(int i = 0;i<6;i++){
+        buf[idx] = digits[(*to_hex) % 16];
+        --idx;
+        buf[idx] =digits[(*to_hex) / 16];
+        --idx;
+        ++to_hex;
+    }
+    return *this;
+}
+
+StreamBuffer::self &StreamBuffer::operator<<(double val) {
+    if(leftSize() < kMaxNumericSize) output();
+    int len = snprintf(getCur(),kMaxNumericSize,"%f",val);
+    addLen(len);
+    return *this;
+}
