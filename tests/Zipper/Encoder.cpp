@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <queue>
 
-GET_LOGGER;
+#include <assert.h>
 
 template <typename T>
 std::string get_two_string(const T& t){
@@ -25,13 +25,13 @@ std::string get_two_string(const T& t){
 
 inline void conver(const std::string & s,int& idx,int& bias ,char * buf)
 {
-    for(int i = 0;i<s.size();i++)
+    for(char i : s)
     {
         if(bias == - 1){
             ++idx;
             bias = 7;
         }
-        if(s[i] == '1')
+        if(i == '1')
         {
             buf[idx] = ((1 << bias) | buf[idx]);
         }
@@ -122,11 +122,41 @@ void Scanner::operator()(const std::string& file_name) {
     SU_LOG_DEBUG(logger) << " Scanner result size is "<<result.size() ;
 }
 
+void file_outer(std::unordered_map<char,std::string> & encode,FileInfo & fileInfo)
+{
+    std::ifstream in(fileInfo.file_name,std::ios::binary);
+    in >> std::noskipws;
+    assert(in.is_open());
+
+    std::ofstream out(std::string(fileInfo.file_name) + ".huf");
+    int readBytes = 0;
+    long long file_test = 0;
+    char* read_buf = new char[ENCODER_READ_SIZE];
+    char* out_buf = new char[ENCODER_WRITE_SIZE];
+    int idx = 0,bias = 7;
+    do{
+            in.read(read_buf,ENCODER_READ_SIZE);
+            readBytes = in.gcount();
+            file_test += readBytes;
+            for(int i = 0;i<readBytes ; i++){
+                auto s = encode[read_buf[i]];
+                conver(s,idx,bias,out_buf);
+            }
+            out.write(out_buf,idx);
+            SU_LOG_DEBUG(logger) << readBytes <<" "<<idx<<" "<<bias;
+            memset(out_buf,0,idx);
+            idx = 0,bias = 7;
+    }while(readBytes);
+    SU_LOG_DEBUG(logger) <<"debug filesize : "<<file_test<<" "<<fileInfo.file_size;
+}
+
 void Encoder::zip_file(const std::string &zip_file_name) {
+    SU_LOG_DEBUG(logger) <<"start";
     file_info.format_name(zip_file_name);
     scanner(zip_file_name);
     m_tree.construct(scanner.getData());
     file_info.format_map(m_tree.encode);
+    file_outer(m_tree.encode,file_info);
 }
 
 

@@ -28,7 +28,7 @@
 
 
 static time_t get_time_now(){
-    auto time_now = std::chrono::high_resolution_clock::now();
+    auto time_now = std::chrono::system_clock::now();
     auto tm_t = std::chrono::system_clock::to_time_t(time_now);
     return tm_t;
 }

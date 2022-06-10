@@ -16,7 +16,10 @@
 
 #include <cstring>
 
-GET_LOGGER;
+inline su::log::Logger::ptr logger;
+
+constexpr int ENCODER_READ_SIZE = 256*1024;
+constexpr int ENCODER_WRITE_SIZE = 2*ENCODER_READ_SIZE + 20;
 
 // ! : only for zipper
 inline std::ifstream open_read_file(const std::string & name)
@@ -93,7 +96,9 @@ struct FileInfo{
 class Encoder {
 public:
     Encoder(){
+        logger = std::make_shared<su::log::Logger>("zipper");
         logger->setFileAppender("encoder_log.txt");
+
     }
     void zip_file(const std::string & zip_file_name);
 private:
