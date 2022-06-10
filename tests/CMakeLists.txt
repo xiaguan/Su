@@ -2,6 +2,6 @@ project(test)
 add_executable(logstream_test logstream_test.cpp)
 target_link_libraries(logstream_test PUBLIC su)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/Zipper)
+#add_subdirectory(${PROJECT_SOURCE_DIR}/Zipper)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

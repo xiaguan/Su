@@ -33,6 +33,29 @@ namespace su{
         result = std::stoull(osr.str());
         return result;
     }
+
+    class TimeCounter{
+    public:
+        typedef std::chrono::time_point<std::chrono::high_resolution_clock,
+        std::chrono::high_resolution_clock::duration> m_timepoint;
+        TimeCounter(const std::string name = "TimeCounter "):couter_name(std::move(name)){
+            begin = std::chrono::high_resolution_clock::now();
+        }
+
+        void start()
+        {
+            begin = std::chrono::high_resolution_clock::now();
+        }
+
+        void end_and_cout()
+        {
+            m_timepoint end = std::chrono::high_resolution_clock::now();
+            std::cout << couter_name <<" count "<<(end-begin).count()/1000000 << " ms";
+        }
+    private:
+        m_timepoint begin;
+        std::string couter_name;
+    };
 }
 
 #endif // SU_LIB_UTILS
