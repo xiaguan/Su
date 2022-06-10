@@ -296,8 +296,5 @@ namespace su{
     }
 }
 
-inline auto logger = SU_LOG_ROOT();
-
-#define GET_LOGGER extern std::shared_ptr<su::log::Logger> logger
 
 #endif
