@@ -91,7 +91,7 @@ namespace su{
             explicit FilenameFormatItem(const std::string & str = ""){}
 
             void format(std::ostream & os,Logger::ptr logger,Event::ptr event) override{
-                os << event->get_filename();
+                    os << event->get_filename();
             }
         };
 
@@ -338,6 +338,7 @@ namespace su{
         }
 
         void Logger::setFileAppender(std::string name) {
+            m_appenders.clear();
             file_appender = std::make_shared<FileOutputAppender>(name);
             file_appender->set_level(Level::INFO);
             add_appender(file_appender);

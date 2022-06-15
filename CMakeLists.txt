@@ -8,11 +8,6 @@ set(ALL_SRCS ${LIB_SRCS})
 aux_source_directory(${PROJECT_SOURCE_DIR}/Log/ LIB_SRCS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/utils/ LIB_SRCS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/Thread/ LIB_SRCS)
-if(UNIX)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Net/ LIB_SRCS)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/kernel/ LIB_SRCS)
-endif()
-
 
 add_library(su OBJECT ${LIB_SRCS})
 
