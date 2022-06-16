@@ -47,6 +47,7 @@ void FileInfo::output(std::ofstream &out) {
         SU_LOG_DEBUG(logger) <<"FileInfo out end";
 
         auto map_hash_value = check_map_hash();
+        std::cout << sizeof(map_hash_value)<<std::endl;
         out.write((char*)&map_hash_value,sizeof(map_hash_value));
 }
 
@@ -66,10 +67,10 @@ void FileInfo::input(std::ifstream &in) {
 
         map = (MapElement*) malloc(map_size * 4);
         in.read((char*)map,map_size * 4);
-//        for(int i = 0;i<map_size;i++)
-//        {
-//                SU_LOG_DEBUG(logger) << map[i].key <<" "<<(int)map[i].length <<"  buf : "<<get_two_string(map[i].buf[0]) <<get_two_string(map[i].buf[1]);
-//        }
+        for(int i = 0;i<map_size;i++)
+        {
+                SU_LOG_DEBUG(logger) << map[i].key <<" "<<(int)map[i].length <<"  buf : "<<get_two_string(map[i].buf[0]) <<get_two_string(map[i].buf[1]);
+        }
 
         unsigned long long read_value  = -1;
         in.read((char*)&read_value,sizeof read_value);
@@ -77,7 +78,7 @@ void FileInfo::input(std::ifstream &in) {
         if(read_value != compute_hash_value)
         {
                 SU_LOG_ERROR(logger) <<" read_value != compute_hash_value" << read_value << " "<<compute_hash_value ;
-                exit(6);
+               // exit(6);
         }
 }
 
@@ -102,12 +103,13 @@ unsigned long long FileInfo::check_map_hash() {
        return result;
 }
 
-std::unordered_map<std::string, char> FileInfo::getMap() {
+std::unordered_map<std::string, char> FileInfo::getMap() const {
         auto logger = SU_LOG_ROOT();
         std::unordered_map<std::string,char> result;
         for(int i = 0;i<map_size;++i)
         {
                 auto key = get_two_string(map[i].buf[0]) + get_two_string(map[i].buf[1]);
+                SU_LOG_DEBUG(logger) <<(int)map[i].length;
                 std::string insert_key(key.begin(),key.begin() + map[i].length);
                 if(result.find(insert_key) != result.end())
                 {

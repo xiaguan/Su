@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-constexpr int ENCODER_READ_SIZE = 256*1024;
+constexpr int ENCODER_READ_SIZE = 1024*1024;
 constexpr int ENCODER_WRITE_SIZE = 2*ENCODER_READ_SIZE + 20;
 
 
@@ -69,7 +69,7 @@ struct FileInfo{
 
     void output(std::ofstream & out);
     void input(std::ifstream & in);
-    std::unordered_map<std::string,char> getMap();
+    std::unordered_map<std::string,char> getMap() const;
     unsigned long long check_map_hash();
 
     ~FileInfo()

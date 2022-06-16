@@ -74,7 +74,7 @@ void HuffMan::makeTree(const std::vector<Node::ptr> &nodes) {
 
 void Scanner::operator()(const std::string& file_name) {
     std::unordered_map<char,long long> result;
-    char read_buf[SCAN_BUF_SIZE];
+    char* read_buf = new char[SCAN_BUF_SIZE];
 
     int result_of_read = 0;
     long long check_size = 0;
@@ -82,22 +82,24 @@ void Scanner::operator()(const std::string& file_name) {
     auto in = open_read_file(file_name);
     // process
     do{
-        result_of_read = in.readsome(read_buf,SCAN_BUF_SIZE);
+        in.read(read_buf,SCAN_BUF_SIZE);
+        result_of_read = in.gcount();
         check_size += result_of_read;
         for(int i = 0;i<result_of_read;i++)
         {
             dp[(unsigned char)read_buf[i]]++;
         }
+        SU_LOG_DEBUG(logger) << " " << result_of_read << std::endl;
     }while(result_of_read);
-
     for(int i = 0;i<=255;i++)
     {
         if(dp[i]){
-           // SU_LOG_DEBUG(logger) <<"dp : "<<(char)i <<" "<<dp[i];
+            SU_LOG_DEBUG(logger) <<"dp : "<<(char)i <<" "<<dp[i];
             result.insert({(char)i,dp[i]});
         }
     }
     SU_LOG_DEBUG(logger) << " Scanner result size is "<<result.size() ;
+    delete read_buf;
 }
 
 void file_outer(std::unordered_map<char,std::string> & encode,FileInfo & fileInfo,std::ofstream & out)
@@ -138,17 +140,18 @@ public:
     void start(int threads_nums)
     {
         std::vector<std::thread> threads;
-        BlockQueue<thread_task> task_queue(160);
+        BlockQueue<thread_task> task_queue(10);
         for(int i = 0;i<threads_nums;i++)
         {
                 threads.emplace_back([&task_queue,this](){
                         int test = 0;
+                        char* out_buf = new char[ENCODER_WRITE_SIZE];
                         while(true){
-                                char * out_buf = new char[ENCODER_WRITE_SIZE];
+                                memset(out_buf, 0, ENCODER_WRITE_SIZE);
                                 SU_LOG_DEBUG(logger) <<"one thread process "<<++test;
                                 auto t = task_queue.get_front();
                                 if(t.order == -1) {
-                                        //delete [] out_buf;
+                                        delete [] out_buf;
                                         return;
                                 }
                                 if(t.getBytes == 0) {
@@ -171,7 +174,6 @@ public:
                                 this->outer.output(out_buf,part_file_info.zip_size,t.order);
                                 SU_LOG_DEBUG(logger) <<"wait out put doen " <<t.order<<" "<<part_file_info.buf_size<<" "<< part_file_info.zip_size << " "<<ENCODER_READ_SIZE;
                                 delete t.read_buf;
-  //                             delete [] out_buf;
                         }
                 });
         }
@@ -219,17 +221,22 @@ private:
 void Encoder::zip_file(const std::string &zip_file_name) {
     SU_LOG_DEBUG(logger) <<"start";
     file_info.format_name(zip_file_name);
+
     scanner(zip_file_name);
     m_tree.construct(scanner.getData());
     file_info.format_map(m_tree.encode);
 
-    std::ofstream out(std::string(file_info.file_name) + ".huf");
+    std::ofstream out(std::string(file_info.file_name) + ".huf",std::ios::binary);
     assert(out.is_open());
     file_info.output(out);
     out.close();
 
     FileFormatter fileFormatter(zip_file_name,m_tree.encode);
-    fileFormatter.start(15);
+
+    int thread_num = std::thread::hardware_concurrency();
+    if(thread_num == 0) thread_num = 1;
+    else --thread_num;
+    fileFormatter.start(thread_num);
     auto after_size = std::filesystem::file_size(zip_file_name + ".huf");
     std::cout <<" zip done "<< (double)after_size / (double)file_info.file_size <<std::endl;
 }

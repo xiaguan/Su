@@ -17,7 +17,7 @@ void for_test(std::ifstream & in,const std::unordered_map<std::string,char> & ta
 {
         auto logger = SU_LOG_ROOT();
         int readBytes = 0;
-        std::ofstream out("test_"+std::string(fileInfo.file_name));
+        std::ofstream out("test_"+std::string(fileInfo.file_name),std::ios::binary);
 
         std::string file_name = "test_"+std::string(fileInfo.file_name);
         char * buf = new char[ENCODER_WRITE_SIZE];

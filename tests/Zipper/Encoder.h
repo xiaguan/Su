@@ -19,7 +19,7 @@
 class Scanner{
 public:
     Scanner(){
-        memset(dp,0,sizeof dp);
+        memset(dp,0,sizeof(dp));
     }
     void operator()(const std::string& file_name);
     long long * getData() {return dp;}
@@ -59,7 +59,7 @@ public:
     void zip_file(const std::string & zip_file_name);
 private:
     HuffMan m_tree;
-    Scanner scanner;
+    Scanner scanner{};
     std::unordered_map<char, std::string> zip_table;
     FileInfo file_info;
 };
