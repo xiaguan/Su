@@ -2,6 +2,9 @@
 #include <memory>
 #include <cstring>
 
+#include <Kernel/list.h>
+#include <Kernel/thrdpool.h>
+
 using namespace std;
 
 
