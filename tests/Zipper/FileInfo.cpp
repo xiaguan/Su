@@ -109,7 +109,6 @@ std::unordered_map<std::string, char> FileInfo::getMap() const {
         for(int i = 0;i<map_size;++i)
         {
                 auto key = get_two_string(map[i].buf[0]) + get_two_string(map[i].buf[1]);
-                SU_LOG_DEBUG(logger) <<(int)map[i].length;
                 std::string insert_key(key.begin(),key.begin() + map[i].length);
                 if(result.find(insert_key) != result.end())
                 {
