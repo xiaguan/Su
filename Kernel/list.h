@@ -121,7 +121,7 @@ static inline void list_splice_init(struct list_head *list,
 }
 
 #define list_entry(ptr, type, member) \
-        ((type*)((char*)(ptr) - (unsigned long)(&((type *)0)->member)))
+        ((type*)((char*)(ptr) - (unsigned long long)(&((type *)0)->member)))
 
 #define list_for_each(pos, head) \
         for((pos) = (head)->next; (pos) != (head); (pos) = (pos)->next)

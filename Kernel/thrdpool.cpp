@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+//todo
+#include <iostream>
+
 struct __thrdpool
 {
     struct list_head task_queue;
@@ -72,15 +75,16 @@ static void *__thrdpool_routine(void *arg)
                free(entry);  // task is new by user,delete by thredpool
                task_routine(task_context); //execute the new task
 
-               // todo : when the nthreads == 0
                if(pool->nthreads == 0)
                {
+                   /* Thread pool was destroyed by the task. */
                        free(pool);
                        return NULL;
                }
         }
 
         /* todo:one thread joins another, Don't need to keep all thread IDs. */
+        std::cout <<"tid is "<<tid <<" pool->tid is"<<pool->tid<<" "<<pthread_self()<<std::endl;
         tid = pool->tid;
         pool->tid = pthread_self();
         if(--pool->nthreads == 0)
@@ -88,9 +92,9 @@ static void *__thrdpool_routine(void *arg)
 
         pthread_mutex_unlock(&pool->mutex);
         // todo : why not use tid != __zero_tid
-        if(memcpy(&tid,&__zero_tid,sizeof(pthread_t)) != 0)
+        if(memcmp(&tid,&__zero_tid,sizeof(pthread_t)) != 0)
                 pthread_join(tid,NULL);
-
+        else std::cout <<"hh"<<" "<<tid<<std::endl;
         return NULL;
 }
 
@@ -120,6 +124,7 @@ static void __thrdpool_destroy_locks(thrdpool_t *pool)
 
 static void __thrdpool_terminate(int in_pool, thrdpool_t *pool)
 {
+        //  cond in the stack memory init way
         pthread_cond_t term = PTHREAD_COND_INITIALIZER;
         pool->terminate = &term;
         pthread_cond_broadcast(&pool->cond);
@@ -127,11 +132,11 @@ static void __thrdpool_terminate(int in_pool, thrdpool_t *pool)
         if(in_pool)
         {
                 /* Thread pool destroyed in a pool thread is legal */
+                std::cout <<"error"<<std::endl;
                 pthread_detach(pthread_self());
                 pool->nthreads--;
         }
 
-        // todo
         while(pool->nthreads > 0)
                 pthread_cond_wait(&term,&pool->mutex);
 
@@ -181,14 +186,13 @@ thrdpool_t *thrdpool_create(size_t nthreads,size_t stacksize)
         {
                 if(__thrdpool_init_locks(pool) >= 0)
                 {
-                        // todo : key is what
                         ret = pthread_key_create(&pool->key,NULL);
                         if(ret == 0)
                         {
                                 INIT_LIST_HEAD(&pool->task_queue);
                                 pool->statcksize = stacksize;
                                 pool->nthreads = 0;
-                                //todo
+                                // if pool->tid == 0 ,it's a pool,not a thread
                                 memset(&pool->tid,0,sizeof(pthread_t));
                                 pool->terminate = NULL;
                                 if(__thrdpool_create_threads(nthreads,pool) >= 0)
@@ -268,6 +272,7 @@ inline int thrdpool_in_pool(thrdpool_t *pool)
 void thrdpool_destroy(void (*pending)(const struct thrdpool_task*),thrdpool_t *pool)
 {
         int in_pool = thrdpool_in_pool(pool);
+        std::cout <<"in_pool"<<in_pool<<std::endl;
         struct __threadpoll_task_entry *entry;
         struct list_head *pos, *tmp;
 
@@ -283,7 +288,7 @@ void thrdpool_destroy(void (*pending)(const struct thrdpool_task*),thrdpool_t *p
 
         pthread_key_delete(pool->key);
         __thrdpool_destroy_locks(pool);
-        if(!pool)
+        if(!in_pool)
                 free(pool);
 }
 

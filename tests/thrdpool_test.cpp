@@ -10,12 +10,10 @@ pthread_mutex_t  mutex;
 void test_func(void *arg)
 {
         int out_value = *(int *)arg;
-        pthread_mutex_lock(&mutex);
         for(int i = 10;i<20;i++){
-                std::cout << out_value<<std::endl;
+                out_value += i;
         }
         free(arg);
-        pthread_mutex_unlock(&mutex);
 }
 
 void end_task(void * arg)
@@ -34,7 +32,11 @@ int main()
                 new_task->context = new int(i);
                 thrdpool_schedule(new_task,pool);
         }
-        thrdpool_task *new_task = new thrdpool_task;
-        new_task->routine = end_task;
-        new_task->context = &pool;
+//        thrdpool_task *new_task = new thrdpool_task;
+//        new_task->routine = end_task;
+//        new_task->context = pool;
+//    thrdpool_schedule(new_task,pool);
+    thrdpool_destroy(NULL,pool);
+    int a;
+        std::cin >> a;
 }
