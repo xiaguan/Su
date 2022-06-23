@@ -10,23 +10,20 @@
 
 void preprare()
 {
-    std::ofstream out("test.txt");
+    std::ofstream out("test.txt",std::ios::binary);
     std::default_random_engine  engine;
-    std::uniform_int_distribution<int> u(70,127);
-    for(int i = 0;i<1e6;i++)
-        out << "abc <?>something is just like this QWEUOI ZO !@#$%^&*()_+{}|:"<<'\n';
+    std::uniform_int_distribution<char> u(70,127);
+    for(int i = 0;i<100*1024*1024;i++)
+        out << u(engine);
 }
 
+//628 160mb/s
+// 2588 40mb/s
 
 int main(){
-   preprare();
+       // preprare();
     su::TimeCounter timeCounter;
-    Encoder encoder;
-    encoder.zip_file("test.txt");
-    timeCounter.end_and_cout();
     Decoder decoder;
-    std::string test="test";
-    std::cout << std::string(test.begin(),test.begin() + 1)<<std::endl;
     decoder.decode("test.txt.huf");
     timeCounter.end_and_cout();
 }

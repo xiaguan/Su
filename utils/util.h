@@ -6,6 +6,7 @@
 #define SU_LIB_UTILS
 
 #include <memory>
+#include <thread>
 
 namespace su{
     template <typename T,class X = void,int N = 0>
@@ -50,7 +51,7 @@ namespace su{
         void end_and_cout()
         {
             m_timepoint end = std::chrono::high_resolution_clock::now();
-            std::cout << couter_name <<" count "<<(end-begin).count()/1000000 << " ms";
+            std::cout << couter_name <<" count "<<(end-begin).count()/1000000 << " ms \n";
         }
     private:
         m_timepoint begin;

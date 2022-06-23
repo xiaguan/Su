@@ -5,13 +5,14 @@
 #ifndef SU_ENCODER_H
 #define SU_ENCODER_H
 
-#include <Log/log.h>
 #include "FileInfo.h"
 
 #include <unordered_map>
 #include <string>
 #include <fstream>
 #include <filesystem>
+#include <map>
+#include <vector>
 
 #include <cstring>
 
@@ -49,12 +50,11 @@ private:
 };
 
 
-
 class Encoder {
 public:
     Encoder(){
-        auto logger = SU_LOG_ROOT();
-        logger->setFileAppender("encoder_log.txt");
+//        auto logger = SU_LOG_ROOT();
+//        logger->setFileAppender("encoder_log.txt");
     }
     void zip_file(const std::string & zip_file_name);
 private:

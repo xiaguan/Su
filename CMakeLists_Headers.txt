@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.6)
+
+set(COMMON_KERNEL_HEADERS
+#	src/kernel/CommRequest.h
+#	src/kernel/CommScheduler.h
+#	src/kernel/Communicator.h
+#	src/kernel/SleepRequest.h
+	src/kernel/ExecRequest.h
+#	src/kernel/IORequest.h
+	src/kernel/Executor.h
+	src/kernel/list.h
+#	src/kernel/mpoller.h
+#	src/kernel/poller.h
+#	src/kernel/msgqueue.h
+#	src/kernel/rbtree.h
+	src/kernel/SubTask.h
+	src/kernel/thrdpool.h
+)
+

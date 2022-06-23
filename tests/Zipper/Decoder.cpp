@@ -34,18 +34,18 @@ class EasyThreadPool
 public:
     EasyThreadPool(int thread_num,const std::string & out_file_name,
                    std::unordered_map<std::string,char> & table):
-    tasks(10), outer(std::ofstream(out_file_name,std::ios::binary)),table(table){
+    tasks(16), outer(std::ofstream(out_file_name,std::ios::binary)),table(table){
         for(int i = 0;i<thread_num;i++){
             threads.emplace_back([this, &table](){
                 char * out_buf = new char[ENCODER_READ_SIZE + 100];
-                auto logger = SU_LOG_ROOT();
+                //auto logger = SU_LOG_ROOT();
                 while(true){
                     auto t = tasks.get_front();
                     if(t.order == -1){
                         delete [] out_buf;
                         return ;
                     }
-                    SU_LOG_DEBUG(logger) <<"a thread get task "<<t.order ;
+                   // SU_LOG_DEBUG(logger) <<"a thread get task "<<t.order ;
                     int idx = 0;
                     memset(out_buf,0,t.buf_size);
                     std::string query;
@@ -55,10 +55,10 @@ public:
                         for(int j = 7;j >= 0;j--){
                             query.push_back((buf[i] >> j) & 1 ? '1':'0');
                             auto it = table.find(query);
-                            if(query.size() >= 1000){
-                                SU_LOG_DEBUG(logger) << query;
-                                exit(66);
-                            }
+//                            if(query.size() >= 1000){
+//                                SU_LOG_DEBUG(logger) << query;
+//                                exit(66);
+//                            }
                             if(it == table.end()) continue;
                             if(idx == t.buf_size)
                             {
@@ -70,7 +70,7 @@ public:
                             query.clear();
                         }
                     }
-                    SU_LOG_DEBUG(logger) <<"a thread finish task "<<t.order ;
+                   // SU_LOG_DEBUG(logger) <<"a thread finish task "<<t.order ;
                     outer.output(out_buf,idx,t.order);
                 }
             });
@@ -92,7 +92,7 @@ private:
 
 void for_test(std::ifstream & in,const std::unordered_map<std::string,char> & table,const FileInfo & fileInfo)
 {
-        auto logger = SU_LOG_ROOT();
+        //auto logger = SU_LOG_ROOT();
         int readBytes = 0;
         std::ofstream out("test_"+std::string(fileInfo.file_name),std::ios::binary);
         char * buf = new char[ENCODER_WRITE_SIZE];
@@ -105,11 +105,11 @@ void for_test(std::ifstream & in,const std::unordered_map<std::string,char> & ta
 
                 idx = 0;
 
-                SU_LOG_DEBUG(logger) <<"buf_size "<<file_part_info.buf_size << " zip_size "<<file_part_info.zip_size - 8;
+                //SU_LOG_DEBUG(logger) <<"buf_size "<<file_part_info.buf_size << " zip_size "<<file_part_info.zip_size - 8;
 
                 in.read(buf,file_part_info.zip_size - 8);
                 readBytes = in.gcount();
-                SU_LOG_DEBUG(logger) <<"readBytes : "<<readBytes;
+               // SU_LOG_DEBUG(logger) <<"readBytes : "<<readBytes;
 
                 // process
                 std::string query;
@@ -118,10 +118,6 @@ void for_test(std::ifstream & in,const std::unordered_map<std::string,char> & ta
                         for(int j = 7;j >= 0;j--){
                                 query.push_back((buf[i] >> j) & 1 ? '1':'0');
                                 auto it = table.find(query);
-                                if(query.size() >= 1000){
-                                        SU_LOG_DEBUG(logger) << query;
-                                        exit(66);
-                                }
                                 if(it == table.end()) continue;
                                 if(idx == file_part_info.buf_size)
                                 {
@@ -134,21 +130,21 @@ void for_test(std::ifstream & in,const std::unordered_map<std::string,char> & ta
                         }
                 }
                 out.write(out_buf,idx);
-                SU_LOG_DEBUG(logger) << "output "<<idx <<" ";
+                //SU_LOG_DEBUG(logger) << "output "<<idx <<" ";
         }while(readBytes);
         delete [] out_buf;
-        SU_LOG_DEBUG(logger) <<" true file_size "<<fileInfo.file_size;
-        SU_LOG_DEBUG(logger) <<" finnaly file_size "<< std::filesystem::file_size("test_"+std::string(fileInfo.file_name));
+        //SU_LOG_DEBUG(logger) <<" true file_size "<<fileInfo.file_size;
+        //SU_LOG_DEBUG(logger) <<" finnaly file_size "<< std::filesystem::file_size("test_"+std::string(fileInfo.file_name));
 }
 
 
 void Decoder::decode(const std::string &decode_file_name) {
-        auto logger = SU_LOG_ROOT();
+       // auto logger = SU_LOG_ROOT();
         auto in = open_read_file(decode_file_name);
         fileInfo.input(in);
 
         auto table = fileInfo.getMap();
-        SU_LOG_DEBUG(logger)<< "for_test";
+        //SU_LOG_DEBUG(logger)<< "for_test";
 
         EasyThreadPool threadPool(15,"test_"+std::string(fileInfo.file_name),table);
 
