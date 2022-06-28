@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <thread>
+#include <sstream>
 
 namespace su{
     template <typename T,class X = void,int N = 0>
@@ -28,6 +29,7 @@ namespace su{
     };
 
     inline unsigned long long getThreadId(){
+
         unsigned long long result = 0;
         std::ostringstream osr;
         osr << std::this_thread::get_id();

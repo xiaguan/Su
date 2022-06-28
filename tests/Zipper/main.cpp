@@ -21,9 +21,9 @@ void preprare()
 // 2588 40mb/s
 
 int main(){
-       // preprare();
+    //preprare();
     su::TimeCounter timeCounter;
-    Decoder decoder;
-    decoder.decode("test.txt.huf");
+    Encoder encoder;
+    encoder.zip_file("test.txt");
     timeCounter.end_and_cout();
 }

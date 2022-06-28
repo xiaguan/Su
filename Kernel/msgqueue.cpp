@@ -42,6 +42,34 @@ struct __msgqueue
 
 
 /*
+ * This a very hard problem,
+ * How to set a queue to be non_block ,when the queue is running?
+ *
+ * 消费者有如下几个状态：
+ * 1. 取任务，会把锁锁上一小会
+ * 2. 取不出来任务，进入到msgqueue_swap里，没有消息会等在while循环处
+ * 也就是说get_mutex 存在长时间持锁行为
+ * 而put_mutex没有，即使队列满了，它也是cond_wait
+ * 或者在swap里，它并没有被长时间持有
+ *
+ * 为什么不锁住消费者？
+ * 1. 有任务可取的时候，消费者的行为并不存在阻塞
+ * 2. 无任务可取的时候，消费者等待在swap中等待get_cond，此时锁是锁了的
+ */
+void msgqueue_set_nonblock(msgqueue_t *queue){
+    queue->is_nonblock = true;
+    pthread_mutex_lock(&queue->put_mutex);
+    pthread_cond_signal(&queue->get_cond);
+    pthread_cond_broadcast(&queue->put_cond);
+    pthread_mutex_unlock(&queue->put_mutex);
+}
+
+void msgqueue_set_block(msgqueue_t *queue)
+{
+    queue->is_nonblock = 0;
+}
+
+/*
  * create a msgqueue ,return the queue or nullptr
  */
 msgqueue_t *msgqueue_create(size_t maxlen,int linkoff)
@@ -137,7 +165,7 @@ void* msgqueue_get(msgqueue_t * queue)
         pthread_mutex_lock(&queue->get_mutex);
 
         if(*queue->get_head || __msgqueue_swap(queue) > 0 ) {
-                msg = (char *)queue->get_head - queue->linkoff;
+                msg = (char *)*queue->get_head - queue->linkoff;
                 *(queue->get_head) = *(void **)*queue->get_head;
         }
         else{

@@ -12,7 +12,7 @@ typedef struct __thrdpool thrdpool_t;
 struct thrdpool_task
 {
     void (*routine)(void *);
-    void *context; // todo
+    void *context;
 };
 
 /*

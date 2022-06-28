@@ -238,7 +238,7 @@ void Encoder::zip_file(const std::string &zip_file_name) {
     if(thread_num == 0) thread_num = 1;
     else --thread_num;
         su::TimeCounter timeCounter("fileformat");
-    fileFormatter.start(thread_num);
+    fileFormatter.start(15);
     timeCounter.end_and_cout();
     auto after_size = std::filesystem::file_size(zip_file_name + ".huf");
     std::cout <<" zip done "<< (double)after_size / (double)file_info.file_size <<std::endl;

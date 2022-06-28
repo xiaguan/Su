@@ -21,7 +21,13 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/Log/ LIB_SRCS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/utils/ LIB_SRCS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/Thread/ LIB_SRCS)
 
-add_library(${PROJECT_NAME} OBJECT ${LIB_SRCS})
+
+add_library(
+        ${PROJECT_NAME} STATIC
+        $<TARGET_OBJECTS:kernel>
+        $<TARGET_OBJECTS:factory>
+        ${LIB_SRCS}
+)
 
 add_executable(test main.cpp)
 target_link_libraries(test PUBLIC ${PROJECT_NAME})

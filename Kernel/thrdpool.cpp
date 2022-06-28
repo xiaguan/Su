@@ -3,7 +3,7 @@
 //
 
 #include "thrdpool.h"
-#include "list.h"
+#include "msgqueue.h"
 
 #include <errno.h>
 #include <pthread.h>
@@ -15,7 +15,7 @@
 
 struct __thrdpool
 {
-    struct list_head task_queue;
+    msgqueue_t *msgqueue;
     size_t nthreads;
     size_t statcksize;
     pthread_t tid;
@@ -30,7 +30,7 @@ struct __thrdpool
  */
 struct __threadpoll_task_entry
 {
-    struct list_head list;
+    void * link;
     struct thrdpool_task task;
 };
 
@@ -46,7 +46,6 @@ static void *__thrdpool_routine(void *arg)
          * change this to void* , so that we can make this func to be a task
          */
         thrdpool_t *pool = (thrdpool_t*)arg;
-        struct list_head **pos = &(pool->task_queue.next);
         struct __threadpoll_task_entry *entry;
         void (*task_routine)(void *);
         void *task_context;
@@ -54,48 +53,43 @@ static void *__thrdpool_routine(void *arg)
 
         /* pool is the private data of the key */
         pthread_setspecific(pool->key,pool);
-        while(1)
+
+        while(pool->terminate == nullptr)
         {
-                // lock the mutex avoid data race
-               pthread_mutex_lock(&pool->mutex);
+            entry = (struct __threadpoll_task_entry *) msgqueue_get(pool->msgqueue);
 
-               // the pool is running ,wait for the new task
-               while(!pool->terminate && list_empty(&pool->task_queue))
-                       pthread_cond_wait(&pool->cond,&pool->mutex);
+            if(!entry)
+                break;
 
-               if(pool->terminate)
-                       break;
-
-               entry = list_entry(*pos,struct __threadpoll_task_entry,list);
-               list_del(*pos);
-               pthread_mutex_unlock(&pool->mutex);
-
-               task_routine = entry->task.routine;
-               task_context = entry->task.context;
-               free(entry);  // task is new by user,delete by thredpool
-               task_routine(task_context); //execute the new task
-
-               if(pool->nthreads == 0)
-               {
-                   /* Thread pool was destroyed by the task. */
-                       free(pool);
-                       return NULL;
-               }
+            /*
+             * entry->task.routine(entry->task.context);
+             * free(entry);
+             */
+            task_routine = entry->task.routine;
+            task_context = entry->task.context;
+            free(entry);
+            task_routine(task_context);
+            /* Thread pool was destroyed by a task. */
+            if(pool->nthreads == 0)
+            {
+                free(pool);
+                return nullptr;
+            }
         }
-
+        pthread_mutex_lock(&pool->mutex);
         /* todo:one thread joins another, Don't need to keep all thread IDs. */
-        std::cout <<"tid is "<<tid <<" pool->tid is"<<pool->tid<<" "<<pthread_self()<<std::endl;
         tid = pool->tid;
         pool->tid = pthread_self();
         if(--pool->nthreads == 0)
                 pthread_cond_signal(pool->terminate);
 
         pthread_mutex_unlock(&pool->mutex);
-        // todo : why not use tid != __zero_tid
+        /*
+         * mpmcmp return 0 when equal
+         */
         if(memcmp(&tid,&__zero_tid,sizeof(pthread_t)) != 0)
-                pthread_join(tid,NULL);
-        else std::cout <<"hh"<<" "<<tid<<std::endl;
-        return NULL;
+                pthread_join(tid,nullptr);
+        return nullptr;
 }
 
 /* init the mutex and cond of the pool */
@@ -103,10 +97,10 @@ static int __thrdpool_init_locks(thrdpool_t *pool)
 {
         int ret;
 
-        ret = pthread_mutex_init(&pool->mutex,NULL);
+        ret = pthread_mutex_init(&pool->mutex,nullptr);
         if(ret == 0)
         {
-                ret = pthread_cond_init(&pool->cond,NULL);
+                ret = pthread_cond_init(&pool->cond,nullptr);
                 if(ret == 0 )
                         return 0;
 
@@ -126,13 +120,14 @@ static void __thrdpool_terminate(int in_pool, thrdpool_t *pool)
 {
         //  cond in the stack memory init way
         pthread_cond_t term = PTHREAD_COND_INITIALIZER;
+
+        pthread_mutex_lock(&pool->mutex);
+        msgqueue_set_block(pool->msgqueue);
         pool->terminate = &term;
-        pthread_cond_broadcast(&pool->cond);
 
         if(in_pool)
         {
                 /* Thread pool destroyed in a pool thread is legal */
-                std::cout <<"error"<<std::endl;
                 pthread_detach(pthread_self());
                 pool->nthreads--;
         }
@@ -142,7 +137,7 @@ static void __thrdpool_terminate(int in_pool, thrdpool_t *pool)
 
         pthread_mutex_unlock(&pool->mutex);
        	if (memcmp(&pool->tid, &__zero_tid, sizeof (pthread_t)) != 0)
-       		pthread_join(pool->tid, NULL);
+       		pthread_join(pool->tid, nullptr);
 }
 
 static int __thrdpool_create_threads(size_t nthreads, thrdpool_t *pool)
@@ -186,23 +181,26 @@ thrdpool_t *thrdpool_create(size_t nthreads,size_t stacksize)
         {
                 if(__thrdpool_init_locks(pool) >= 0)
                 {
-                        ret = pthread_key_create(&pool->key,NULL);
+                        ret = pthread_key_create(&pool->key,nullptr);
                         if(ret == 0)
                         {
-                                INIT_LIST_HEAD(&pool->task_queue);
-                                pool->statcksize = stacksize;
-                                pool->nthreads = 0;
-                                // if pool->tid == 0 ,it's a pool,not a thread
-                                memset(&pool->tid,0,sizeof(pthread_t));
-                                pool->terminate = NULL;
-                                if(__thrdpool_create_threads(nthreads,pool) >= 0)
+                                pool->msgqueue = msgqueue_create((size_t)-1,0);
+                                if(pool->msgqueue)
+                                {
+                                    pool->statcksize = stacksize;
+                                    pool->nthreads = 0;
+                                    // if pool->tid == 0 ,it's a pool,not a thread
+                                    memset(&pool->tid,0,sizeof(pthread_t));
+                                    pool->terminate = nullptr;
+                                    if(__thrdpool_create_threads(nthreads,pool) >= 0)
                                         return pool;
 
+                                    msgqueue_destroy(pool->msgqueue);
+                                }
                                 pthread_key_delete(pool->key);
                         }
                         else
                                 errno = ret;
-
                         __thrdpool_destroy_locks(pool);
                 }
 
@@ -216,13 +214,9 @@ inline void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
 void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
                                         thrdpool_t *pool)
 {
-        struct __threadpoll_task_entry *entry = (struct __threadpoll_task_entry *)buf;
-
-        entry->task = *task;
-       	pthread_mutex_lock(&pool->mutex);
-       	list_add_tail(&entry->list, &pool->task_queue);
-       	pthread_cond_signal(&pool->cond);
-       	pthread_mutex_unlock(&pool->mutex);
+        ((struct __threadpoll_task_entry *)buf)->task = *task;
+        auto debug = (__threadpoll_task_entry*)buf;
+        msgqueue_put(buf,pool->msgqueue);
 }
 
 int thrdpool_schedule(const struct thrdpool_task *task, thrdpool_t *pool)
@@ -265,25 +259,25 @@ int thrdpool_increase(thrdpool_t *pool)
 
 inline int thrdpool_in_pool(thrdpool_t *pool)
 {
-        // todo
         return pthread_getspecific(pool->key) == pool;
 }
 
 void thrdpool_destroy(void (*pending)(const struct thrdpool_task*),thrdpool_t *pool)
 {
         int in_pool = thrdpool_in_pool(pool);
-        std::cout <<"in_pool"<<in_pool<<std::endl;
         struct __threadpoll_task_entry *entry;
         struct list_head *pos, *tmp;
 
         __thrdpool_terminate(in_pool,pool);
-        list_for_each_safe(pos,tmp,&pool->task_queue)
+        while(true)
         {
-                entry = list_entry(pos,struct __threadpoll_task_entry, list);
-                list_del(pos);
-                if(pending)
-                        pending(&entry->task);
-                free(entry);
+            entry = (struct __threadpoll_task_entry *) msgqueue_get(pool->msgqueue);
+            if(!entry)
+                break;
+
+            if(pending)
+                pending(&entry->task);
+            free(entry);
         }
 
         pthread_key_delete(pool->key);

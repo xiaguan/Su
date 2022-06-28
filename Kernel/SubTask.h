@@ -10,9 +10,14 @@
 class ParallelTask;
 
 /*
- * we see the SubTask mostly by multi-inherit
- * The SubTask describe the most fundamental task in our lib
- * // todo: explain the SubTask and ParallelTask
+ * 大部分情况下我们看到的SubTask都是多继承，换句话说
+ * 它是接口基类，它规定了workflow中最基本的任务描述
+ * 关于它有这么几点需要注意：
+ * 1. dispatch() 是纯虚函数，子类需要覆盖这个接口// todo: when call dispatch()
+ * 2. done() 也是纯虚函数，子类需要覆盖//todo:
+ * 2. void * pointer 指针，我感觉void *,就是Cstyle的泛型
+ * // todo : task and paralleltask
+ *
  */
 class SubTask {
 public:
@@ -28,7 +33,6 @@ public:
     friend class ParallelTask;
 protected:
     void subtask_done();
-
 private:
     ParallelTask *parent;
     SubTask **entry;

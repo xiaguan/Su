@@ -58,7 +58,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next)
 
 static inline void list_del(struct list_head *entry)
 {
-        // todo: how about delete?
+        // memory free by user
         __list_del(entry->prev,entry->next);
 }
 

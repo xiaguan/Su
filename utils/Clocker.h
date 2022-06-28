@@ -5,7 +5,6 @@
 #ifndef SU_CLOCKER_H
 #define SU_CLOCKER_H
 
-// todo
 class Clocker {
 
 };

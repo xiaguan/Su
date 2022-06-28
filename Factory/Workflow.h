@@ -11,9 +11,18 @@
 #include <mutex>
 #include <assert.h>
 
+/*
+ * workflow其实是个工厂
+ * 各种create和start serieswork和parallelwork
+ */
+
 class SeriesWork;
 class ParallelWork;
 
+/*
+ * 两个任务的回调函数
+ * workflow的回调函数格式基本都是这样的
+ */
 using series_callback_t = std::function<void (const SeriesWork *)>;
 using parallel_callback_t = std::function<void (const ParallelWork *)>;
 
@@ -56,7 +65,11 @@ public:
             this->first->dispatch();
     }
 
-    //todo: the note of workflow
+    /*
+     * 只有当你不想启动一个已经创建了的series时调用
+     * todo 它是递归处理的？不是循环吗？
+     * 所以只用在”root"处调用
+     */
     void dismiss()
     {
             assert(!this->in_parallel);
@@ -73,7 +86,7 @@ public:
 
 public:
     // todo: translate the note of workflow
-    virtual void cancle() {this->canceled = true;}
+    virtual void cancel() {this->canceled = true;}
     bool is_canceled() const {return this->canceled;}
     bool is_finished() const {return !this->first;}
 
