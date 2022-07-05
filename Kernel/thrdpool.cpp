@@ -215,7 +215,6 @@ void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
                                         thrdpool_t *pool)
 {
         ((struct __threadpoll_task_entry *)buf)->task = *task;
-        auto debug = (__threadpoll_task_entry*)buf;
         msgqueue_put(buf,pool->msgqueue);
 }
 

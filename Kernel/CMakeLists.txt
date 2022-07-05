@@ -3,8 +3,9 @@ project(kernel)
 
 set(SRC
         thrdpool.cpp
-        Executor.cpp
         SubTask.cpp
-        msgqueue.cpp)
+        msgqueue.cpp
+        Executor.cpp
+        )
 
 add_library(${PROJECT_NAME} OBJECT ${SRC})

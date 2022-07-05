@@ -23,13 +23,14 @@ class SubTask {
 public:
     virtual void dispatch() = 0;
 
-    ParallelTask *get_parent_task() const {return this->parent;}
-    void *get_pointer() const {return pointer;}
+    [[nodiscard]] ParallelTask *get_parent_task() const {return this->parent;}
+    [[nodiscard]] void *get_pointer() const {return pointer;}
+
     void set_pointer(void *pointer) {this->pointer = pointer;}
 
     SubTask():parent(nullptr),entry(nullptr),pointer(nullptr) { }
 
-    virtual ~SubTask() { }
+    virtual ~SubTask() = default;
     friend class ParallelTask;
 protected:
     void subtask_done();

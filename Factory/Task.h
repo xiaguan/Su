@@ -42,7 +42,7 @@ public:
             this->callback = std::move(cb);
     }
 
-    virtual SubTask *done() override
+    SubTask *done() override
     {
             SeriesWork *series = series_of(this);
 

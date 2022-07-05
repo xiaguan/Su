@@ -9,6 +9,8 @@
 #include <pthread.h>
 #include "list.h"
 
+#include "thrdpool.h"
+
 /*
  * About the Execute-module
  * Each executor hold a threadpool, do not share
@@ -41,11 +43,11 @@ public:
     int init();
     void deinit();
 
-    virtual  ~ExecQueue() { }
+    virtual  ~ExecQueue() = default;
 
 private:
-    struct list_head task_list;
-    pthread_mutex_t mutex;
+    struct list_head task_list{};
+    pthread_mutex_t mutex{};
 };
 
 constexpr int ES_STATE_FINISHED = 0;
@@ -57,18 +59,17 @@ class ExecSession
 public:
     friend class Executor;
 
-    // todo: the interface of execu
     virtual void execute() = 0;
-    // todo : the interface of handle state
+
     virtual void handle(int state,int error) = 0;
-    virtual ~ExecSession() { }
+    virtual ~ExecSession() = default;
 
 
 protected:
     ExecQueue *get_queue() {return this->queue;}
 
 private:
-    ExecQueue *queue; // todo: a ptr not a obj
+    ExecQueue *queue{};
 };
 
 
@@ -80,10 +81,10 @@ public:
 
     int request(ExecSession *session, ExecQueue *queue);
 
-    virtual ~Executor() { }
+    virtual ~Executor() = default;
 
 private:
-    struct __thrdpool *thrdpool;
+     __thrdpool *thrdpool{nullptr};
 
 private:
     static void excutor_thread_routine(void *context);

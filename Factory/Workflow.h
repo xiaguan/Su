@@ -56,6 +56,11 @@ public:
 					  series_callback_t callback);
 };
 
+/*
+ * 一系列任务，利用**循环**数组模拟不限制长度的队列
+ * 数组里存储的是SubTask指针
+ */
+
 class SeriesWork
 {
 public:
@@ -81,14 +86,14 @@ public:
     void push_front(SubTask *task);
 
 public:
-    void *get_context() const {return this->context;}
+    [[nodiscard]] void *get_context() const {return this->context;}
     void set_context(void *context) { this->context = context;}
 
 public:
     // todo: translate the note of workflow
     virtual void cancel() {this->canceled = true;}
-    bool is_canceled() const {return this->canceled;}
-    bool is_finished() const {return !this->first;}
+    [[nodiscard]] bool is_canceled() const {return this->canceled;}
+    [[nodiscard]] bool is_finished() const {return !this->first;}
 
     void set_callback(series_callback_t callback)
     {
@@ -113,26 +118,30 @@ protected:
 
     void dismiss_recursive();
 protected:
-    void *context;
+    void *context{};
     series_callback_t  callback;
 
 private:
     SubTask *first;
-    SubTask *last;
     SubTask **queue;
-    int queue_size;
-    int front;
-    int back;
-    bool in_parallel;
-    bool canceled;
-    std::mutex mutex;
+
+    int queue_size{4};
+    SubTask *buf[4]{};
+    SubTask *last{nullptr};
+    int front{0};
+    int back{0};
+    bool in_parallel{false};
+    bool canceled{false};
+    bool finished{false};
+    std::mutex mutex{};
 
     SubTask *pop_task();
     void expand_queue();
 
 protected:
     SeriesWork(SubTask *first,series_callback_t && callback);
-    virtual  ~SeriesWork() { delete [] this->queue; }
+    virtual  ~SeriesWork();
+
     friend class ParallelWork;
     friend class Workflow;
 };
@@ -184,6 +193,9 @@ Workflow::start_series_work(SubTask *first, SubTask *last,
 	first->dispatch();
 }
 
+
+
+
 class ParallelWork : public ParallelTask
 {
 public:
@@ -209,4 +221,6 @@ private:
     size_t buf_size;
     SeriesWork **all_series;
 };
+
+
 #endif //SU_WORKFLOW_H

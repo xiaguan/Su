@@ -21,7 +21,7 @@ int ExecQueue::init()
 {
         int ret;
 
-        ret = pthread_mutex_init(&this->mutex,NULL);
+        ret = pthread_mutex_init(&this->mutex,nullptr);
         if(ret == 0)
         {
                 INIT_LIST_HEAD(&this->task_list);
@@ -55,8 +55,8 @@ void Executor::deinit()
         thrdpool_destroy(Executor::excutor_cancle_tasks,this->thrdpool);
 }
 
-extern "C" void __thrdpool_schedule(const struct thrdpool_task *, void *,
-									thrdpool_t *);
+extern "C" void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
+                                      thrdpool_t *pool);
 
 void Executor::excutor_thread_routine(void *context)
 {

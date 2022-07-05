@@ -4,6 +4,7 @@ project(factory)
 set(SRC
         Task.h
         Task.cpp
-        Workflow.h)
+        Workflow.h
+        Workflow.cpp TaskFactory.cpp TaskFactory.h)
 
 add_library(${PROJECT_NAME} OBJECT ${SRC})

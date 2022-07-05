@@ -12,9 +12,11 @@ add_custom_target(
 include(CMakeLists_Headers.txt)
 
 add_subdirectory(Kernel)
+add_subdirectory(Manager)
 add_subdirectory(Factory)
 
 add_dependencies(kernel LINK_HEADERS)
+add_dependencies(manager LINK_HEADERS)
 add_dependencies(factory LINK_HEADERS)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/Log/ LIB_SRCS)
@@ -26,8 +28,9 @@ add_library(
         ${PROJECT_NAME} STATIC
         $<TARGET_OBJECTS:kernel>
         $<TARGET_OBJECTS:factory>
+        $<TARGET_OBJECTS:manager>
         ${LIB_SRCS}
-)
+       )
 
 add_executable(test main.cpp)
 target_link_libraries(test PUBLIC ${PROJECT_NAME})
