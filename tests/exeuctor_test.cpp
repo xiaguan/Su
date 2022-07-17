@@ -14,12 +14,12 @@ public:
     void execute() override
     {
         ++cnt;
-        std::cout <<"hello"<<std::endl;
     }
     SubTask *done() override
     {
         return nullptr;
     }
+    void display() {std::cout << cnt << std::endl;}
 private:
     std::atomic<int> cnt{0};
 };
@@ -31,7 +31,8 @@ int main()
     executor.init(1);
     queue.init();
     Test test(&queue,&executor);
-
+    for(int i = 0;i<10000;i++) test.dispatch();
     int a;
     std::cin >> a;
+    test.display();
 }

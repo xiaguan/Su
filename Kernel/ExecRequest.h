@@ -7,6 +7,7 @@
 
 #include "SubTask.h"
 #include "Executor.h"
+#include "errno.h"
 
 /*
  * 这是kernel的执行体系：Executor...等提供给外界的接口，翻译过来就是执行请求嘛

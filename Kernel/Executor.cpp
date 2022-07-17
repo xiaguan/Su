@@ -55,7 +55,7 @@ void Executor::deinit()
         thrdpool_destroy(Executor::excutor_cancle_tasks,this->thrdpool);
 }
 
-extern "C" void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
+extern void __thrdpool_schedule(const struct thrdpool_task *task, void *buf,
                                       thrdpool_t *pool);
 
 void Executor::excutor_thread_routine(void *context)

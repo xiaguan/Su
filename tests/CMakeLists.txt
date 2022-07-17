@@ -3,7 +3,7 @@ project(test)
 add_executable(logstream_test logstream_test.cpp)
 target_link_libraries(logstream_test PUBLIC su)
 
-add_executable(BlockQueueTest BlockQueue_test.cpp thread_task_test.cpp exeuctor_test.cpp)
+add_executable(BlockQueueTest BlockQueue_test.cpp thread_task_test.cpp exeuctor_test.cpp timestamp_test.cpp)
 target_link_libraries(BlockQueueTest PUBLIC su)
 
 add_executable(thrdpool_test thrdpool_test.cpp)
