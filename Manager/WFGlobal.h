@@ -20,11 +20,11 @@ static constexpr GlobalSettings DEFTAUL_SETTINGS = {
 
 class SettingManager{
 public:
-  static const GlobalSettings* get_settings() {return &m_settings;}
+  static const GlobalSettings* get_settings() {return &(m_settings);}
   static Executor *get_compute_executor();
   static ExecQueue *get_exec_queue(const std::string& queue_name);
 private:
-  static GlobalSettings m_settings;
+  static struct GlobalSettings m_settings;
 };
 
 #endif //SU_WFGLOBAL_H

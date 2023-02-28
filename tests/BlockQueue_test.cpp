@@ -19,7 +19,6 @@ using namespace std;
 void max_lenth_test()
 {
     su::log::Logger::ptr logger(new su::log::Logger("thread_test"));
-    std::async()
     logger->setFileAppender("block_queue.txt");
     vector<thread> threads;
     su::TimeCounter timeCounter;

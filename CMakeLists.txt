@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 project(su)
 
+set(cmake_cxx_compiler "clnag++")
+set(cmake-c_compiler "clang")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include_directories(${PROJECT_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)

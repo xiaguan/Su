@@ -25,6 +25,7 @@ private:
 
 };
 
+
 __Global::__Global()
 {
     static_scheme_port_["dns"] = "53";
@@ -71,6 +72,8 @@ __Global::__Global()
     static_scheme_port_["Kafka"] = "9092";
     static_scheme_port_["KAFKA"] = "9092";
 }
+
+struct GlobalSettings SettingManager::m_settings = DEFTAUL_SETTINGS;
 
 class __ExecManager
 {

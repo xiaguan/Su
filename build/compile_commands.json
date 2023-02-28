@@ -1,0 +1,107 @@
+[
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o CMakeFiles/su.dir/Log/Buffer.cpp.o -c /home/susun/code/Su/Log/Buffer.cpp",
+  "file": "/home/susun/code/Su/Log/Buffer.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o CMakeFiles/su.dir/Log/log.cpp.o -c /home/susun/code/Su/Log/log.cpp",
+  "file": "/home/susun/code/Su/Log/log.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o CMakeFiles/test.dir/main.cpp.o -c /home/susun/code/Su/main.cpp",
+  "file": "/home/susun/code/Su/main.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Kernel/CMakeFiles/kernel.dir/thrdpool.cpp.o -c /home/susun/code/Su/Kernel/thrdpool.cpp",
+  "file": "/home/susun/code/Su/Kernel/thrdpool.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Kernel/CMakeFiles/kernel.dir/SubTask.cpp.o -c /home/susun/code/Su/Kernel/SubTask.cpp",
+  "file": "/home/susun/code/Su/Kernel/SubTask.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Kernel/CMakeFiles/kernel.dir/msgqueue.cpp.o -c /home/susun/code/Su/Kernel/msgqueue.cpp",
+  "file": "/home/susun/code/Su/Kernel/msgqueue.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Kernel/CMakeFiles/kernel.dir/Executor.cpp.o -c /home/susun/code/Su/Kernel/Executor.cpp",
+  "file": "/home/susun/code/Su/Kernel/Executor.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Manager/CMakeFiles/manager.dir/WFGlobal.cpp.o -c /home/susun/code/Su/Manager/WFGlobal.cpp",
+  "file": "/home/susun/code/Su/Manager/WFGlobal.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Factory/CMakeFiles/factory.dir/Task.cpp.o -c /home/susun/code/Su/Factory/Task.cpp",
+  "file": "/home/susun/code/Su/Factory/Task.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Factory/CMakeFiles/factory.dir/Workflow.cpp.o -c /home/susun/code/Su/Factory/Workflow.cpp",
+  "file": "/home/susun/code/Su/Factory/Workflow.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o Factory/CMakeFiles/factory.dir/TaskFactory.cpp.o -c /home/susun/code/Su/Factory/TaskFactory.cpp",
+  "file": "/home/susun/code/Su/Factory/TaskFactory.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/logstream_test.dir/logstream_test.cpp.o -c /home/susun/code/Su/tests/logstream_test.cpp",
+  "file": "/home/susun/code/Su/tests/logstream_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/thrdpool_test.dir/thrdpool_test.cpp.o -c /home/susun/code/Su/tests/thrdpool_test.cpp",
+  "file": "/home/susun/code/Su/tests/thrdpool_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/msgqueue_test.dir/msgqueue_test.cpp.o -c /home/susun/code/Su/tests/msgqueue_test.cpp",
+  "file": "/home/susun/code/Su/tests/msgqueue_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/workflow_test.dir/workflow_test.cpp.o -c /home/susun/code/Su/tests/workflow_test.cpp",
+  "file": "/home/susun/code/Su/tests/workflow_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/thread_task_test.dir/thread_task_test.cpp.o -c /home/susun/code/Su/tests/thread_task_test.cpp",
+  "file": "/home/susun/code/Su/tests/thread_task_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/CMakeFiles/exeuctor_test.dir/exeuctor_test.cpp.o -c /home/susun/code/Su/tests/exeuctor_test.cpp",
+  "file": "/home/susun/code/Su/tests/exeuctor_test.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/Zipper/CMakeFiles/zipper.dir/main.cpp.o -c /home/susun/code/Su/tests/Zipper/main.cpp",
+  "file": "/home/susun/code/Su/tests/Zipper/main.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/Zipper/CMakeFiles/zipper.dir/Encoder.cpp.o -c /home/susun/code/Su/tests/Zipper/Encoder.cpp",
+  "file": "/home/susun/code/Su/tests/Zipper/Encoder.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/Zipper/CMakeFiles/zipper.dir/Decoder.cpp.o -c /home/susun/code/Su/tests/Zipper/Decoder.cpp",
+  "file": "/home/susun/code/Su/tests/Zipper/Decoder.cpp"
+},
+{
+  "directory": "/home/susun/code/Su/build",
+  "command": "/usr/bin/c++ -I/home/susun/code/Su -std=gnu++20 -o tests/Zipper/CMakeFiles/zipper.dir/FileInfo.cpp.o -c /home/susun/code/Su/tests/Zipper/FileInfo.cpp",
+  "file": "/home/susun/code/Su/tests/Zipper/FileInfo.cpp"
+}
+]
